@@ -172,7 +172,7 @@ Unarity unarity(const std::string& token) {
     return Unarity::Binary;
 }
 
-double unary(std::string operation, double operand) {
+double unary(const std::string& operation, double operand) {
     if (operation == "sin") {
         return sin(operand);
     }
@@ -182,7 +182,7 @@ double unary(std::string operation, double operand) {
     throw "no operation for operand";
 }
 
-double binary(std::string operation, double operand1, double operand2) {
+double binary(const std::string& operation, double operand1, double operand2) {
     if (operation == "+") {
         return operand1 + operand2;
     }
