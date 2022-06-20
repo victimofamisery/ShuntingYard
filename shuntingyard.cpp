@@ -23,17 +23,13 @@ namespace {
         if (token.empty()) {
             return false;
         }
-
         if (token[0] == '-' && token.length() == 1) {
             return false;
         }
-
         size_t start = 0;
-
         if(token[0] == '-') {
             start = 1;
         }
-
         for (auto i = start; i < token.length(); i++) {
             if (!std::isdigit(token[i]) && token[i] != '.') {
                 return false;
@@ -42,11 +38,9 @@ namespace {
                 count++;
             }
         }
-
         if (count > 1) {
             return false;
         }
-
         return true;
     }
 
@@ -57,7 +51,6 @@ namespace {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -70,7 +63,6 @@ namespace {
                 }       
             }
         }
-
         return false;
     }
 
@@ -81,7 +73,6 @@ namespace {
                 return it - priorityVector.begin();
             }
         }
-
         return -1;
     }
 
@@ -90,7 +81,6 @@ namespace {
         if (token == "^") {
             return Associativity::Right;
         }
-
         else {
             return Associativity::Left;
         }
@@ -103,7 +93,6 @@ namespace {
                 return Unarity::Unary;
             }
         }
-
         return Unarity::Binary;
     }
 
@@ -112,11 +101,9 @@ namespace {
         if (operation == "sin") {
             return sin(operand);
         }
-
         else if (operation == "cos") {
             return cos(operand);
         }
-
         throw std::invalid_argument("no operation for operand");
     }
 
@@ -125,23 +112,18 @@ namespace {
         if (operation == "+") {
             return operand1 + operand2;
         }
-
         else if (operation == "-") {
             return operand1 - operand2;
         }
-
         else if (operation == "*") {
             return operand1 * operand2;
         }
-
         else if (operation == "/") {
             return operand1 / operand2;
         }
-
         else if (operation == "^") {
             return pow(operand1, operand2);
         }
-
         throw std::invalid_argument("no operation for operand");
     }
 }
@@ -153,11 +135,9 @@ std::vector<std::string> ShuntingYard::tokenize(const std::string& expression) {
         if (c == ' ') {  
             continue;   
         }
-
         else if (tokenVector.empty()) {
             tokenVector.push_back(std::string(&c, 1));
         }
-
         else if (std::isdigit(c) || c == '.') {
             if (isNumber(tokenVector.back())) {
                 tokenVector.back() += c;
@@ -174,11 +154,9 @@ std::vector<std::string> ShuntingYard::tokenize(const std::string& expression) {
                 tokenVector.push_back(std::string(&c, 1));
             }
         } 
-
         else if (c == ')' || c == '(') {
             tokenVector.push_back(std::string(&c, 1));
         }
-
         else {
             if (isNumber(tokenVector.back()) ||
                 tokenVector.back() == ")" || tokenVector.back() == "(") 
@@ -190,7 +168,6 @@ std::vector<std::string> ShuntingYard::tokenize(const std::string& expression) {
             }
         }
     }
-
     return tokenVector;
 }
 
@@ -202,11 +179,9 @@ std::queue<std::string> ShuntingYard::shuntingYard(const std::vector<std::string
         if (isNumber(token)) {
             queue.push(token);
         }
-
         else if (isFunction(token)) {
             stack.push(token);
         }
-        
         else if (isOperator(token)) {
             while 
             (
@@ -227,11 +202,9 @@ std::queue<std::string> ShuntingYard::shuntingYard(const std::vector<std::string
             }
             stack.push(token);
         }
-
         else if (token == "(") {
             stack.push(token);
         }
-
         else if (token == ")") {
             while (!stack.empty() && stack.top() != "(") {
                 queue.push(stack.top());
@@ -242,12 +215,10 @@ std::queue<std::string> ShuntingYard::shuntingYard(const std::vector<std::string
             }
             stack.pop();
         }
-
         else {
             throw std::invalid_argument("Wrong symbol");
         }
     }
-
     while (!stack.empty()) {
         if (stack.top() == "(") {
             throw std::invalid_argument("Inbalanced parentheses");
@@ -255,7 +226,6 @@ std::queue<std::string> ShuntingYard::shuntingYard(const std::vector<std::string
         queue.push(stack.top());
         stack.pop();
     }
-
     return queue;
 }
 
@@ -265,11 +235,10 @@ double ShuntingYard::calculate(std::queue<std::string> output) {
     while (!output.empty()) {
         auto token = output.front();
         output.pop();
-        
+
         if (isNumber(token)) {
             stack.push(std::stod(token));
         }
-
         else if (isOperator(token) || isFunction(token)) {
             if (unarity(token) == Unarity::Unary) {
                 double operand = stack.top();
@@ -285,7 +254,6 @@ double ShuntingYard::calculate(std::queue<std::string> output) {
             }
         }
     }
-
     auto result = stack.top();
     stack.pop();
 
