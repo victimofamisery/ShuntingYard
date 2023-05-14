@@ -270,7 +270,7 @@ namespace {
 }
 
 
-std::vector<std::string> ShuntingYard::tokenize(const std::string& expression) {
+std::vector<std::string> tokenize(const std::string& expression) {
     std::vector<std::string> tokenVector;
     for (auto&& c : expression) {
         if (c == ' ') {  
@@ -316,7 +316,7 @@ std::vector<std::string> ShuntingYard::tokenize(const std::string& expression) {
 }
 
 
-std::queue<std::string> ShuntingYard::shuntingYard(const std::vector<std::string>& tokenVector) {
+std::queue<std::string> shuntingYard(const std::vector<std::string>& tokenVector) {
     std::stack<std::string> stack;
     std::queue<std::string> queue;
     for(auto&& token : tokenVector) {
@@ -374,7 +374,7 @@ std::queue<std::string> ShuntingYard::shuntingYard(const std::vector<std::string
 }
 
 
-double ShuntingYard::calculate(std::queue<std::string> output) {
+double calculate(std::queue<std::string> output) {
     std::stack<double> stack;
     while (!output.empty()) {
         auto token = output.front();
@@ -407,4 +407,11 @@ double ShuntingYard::calculate(std::queue<std::string> output) {
     else {
         throw std::invalid_argument("Incorrect expression");
     }
+}
+
+double ShuntingYard::calc(const std::string& expression) {
+    auto tokens = tokenize(expression);
+    auto output = shuntingYard(tokens);
+    double result = calculate(output);
+    return result;
 }

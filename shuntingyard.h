@@ -8,7 +8,8 @@
 #include <exception> 
 
 namespace ShuntingYard{
-    std::vector<std::string> tokenize(const std::string& expression);
-    std::queue<std::string> shuntingYard(const std::vector<std::string>& tokenVector);
-    double calculate(std::queue<std::string> output); 
+    double calc(const std::string& expression);
+    // std::vector<std::string> tokenize(const std::string& expression);
+    // std::queue<std::string> shuntingYard(const std::vector<std::string>& tokenVector);
+    // double calculate(std::queue<std::string> output); 
 }
