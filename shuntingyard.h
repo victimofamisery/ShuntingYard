@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <stack>
-#include <cmath>
+// #include <cmath>
 #include <exception> 
 
 namespace ShuntingYard{

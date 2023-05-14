@@ -12,11 +12,134 @@ namespace {
     };
 
 
+
+
+
     std::vector<std::vector<std::string>> priorityVector({{"^"}, {"*", "/"}, {"+", "-"}});
-    std::vector<std::string> functionsVector({"sin", "cos"});
-    std::vector<std::string> unaryVector({"sin", "cos"});
+    std::vector<std::string> functionsVector({"sin", "cos", "asin", "acos", "tg", "atg", "ctg", "ln"});
+    std::vector<std::string> unaryVector({"sin", "cos", "asin", "acos", "tg", "atg", "ctg", "ln"});
     std::vector<std::string> rightAssociativityVector({"^"});
 
+    double Pi = 3.14159265359;
+
+    double fabs(double x) {
+        if(x < 0) {
+            return -x;
+        }
+        else {
+            return x;
+        }
+    }
+
+    double sin(double x){
+        int i = 1;
+        double cur = x;
+        double acc = 1;
+        double fact= 1;
+        double pow = x;
+        while (fabs(acc) > .00000001 &&   i < 100){
+            fact *= ((2*i)*(2*i+1));
+            pow *= -1 * x*x; 
+            acc =  pow / fact;
+            cur += acc;
+            i++;
+        }
+        return cur;
+    }
+
+    double cos(double x) {
+        return sin(2 * x) / (2 * sin(x));
+    }
+
+    double asin(double x) {
+        if(fabs(x) > 1) {
+            throw std::invalid_argument("Incorrect value in asin");
+        }
+        double i = 1;
+        double cur = x;
+        double acc = 1;
+        double fact= 1;
+        double pow = x;
+        while (fabs(acc) > .00000001 &&   i < 100) {
+            fact *= ((2*i-1) / (2*i) * (2*i - 1) / (2*i + 1));
+            pow *= x*x; 
+            acc =  pow * fact;
+            cur += acc;
+            i++;
+        }
+        return cur;
+    }
+
+    double acos(double x) {
+        if(fabs(x) > 1) {
+            throw std::invalid_argument("Incorrect value in acos");
+        }
+        return (Pi/2 - asin(x));
+    }
+
+    double tg(double x) {
+        if(cos(x) == 0) {
+            throw std::invalid_argument("Incorrect value in tg");
+        }
+        return sin(x) / cos(x);
+    }
+
+    double ctg(double x) {
+        if(sin(x) == 0) {
+            throw std::invalid_argument("Incorrect value in ctg");
+        }
+        return cos(x) / sin(x);
+    }
+
+    double atg(double x){
+        return asin(x / pow(1 + pow(x, 1/2), 1/2)); 
+        // // return atan(x);
+        // int i = 1;
+        // double cur = x;
+        // double acc = 1;
+        // double fact= 1;
+        // double pow = x;
+        // while (fabs(acc) > .00000001 &&   i < 100){
+        //     fact = 2 * i + 1;
+        //     pow *= -1 * x*x; 
+        //     acc =  pow / fact;
+        //     cur += acc;
+        //     i++;
+        // }
+        // return cur;
+    }
+
+    double pow(double a, double b) {
+        int i = 1;
+        double cur = 1;
+        double acc = 1;
+        double fact= 1;
+        double pow = 1;
+        while (fabs(acc) > .00000001 &&   i < 100){
+            fact *= log(a) / i;
+            pow *= b; 
+            acc =  pow * fact;
+            cur += acc;
+            i++;
+        }
+        return cur;
+    }
+
+    double ln(double x) {
+        int i = 2;
+        double cur = 2 * (x - 1)/(x + 1);
+        double acc = 1;
+        double fact= 1;
+        double pow = 2 * (x - 1)/(x + 1);
+        while (fabs(acc) > .00000001 &&   i < 100){
+            fact = 2 * i - 1;
+            pow *= (x - 1)/(x + 1) * (x - 1)/(x + 1); 
+            acc =  pow / fact;
+            cur += acc;
+            i++;
+        }
+        return cur;
+    }    
 
     bool isNumber(std::string token)  {
         int count = 0;
@@ -104,6 +227,24 @@ namespace {
         else if (operation == "cos") {
             return cos(operand);
         }
+        else if (operation == "asin") {
+            return asin(operand);
+        }
+        else if (operation == "acos") {
+            return acos(operand);
+        }
+        else if (operation == "tg") {
+            return tg(operand);
+        }
+        else if (operation == "atg") {
+            return atg(operand);
+        }
+        else if (operation == "ctg") {
+            return ctg(operand);
+        }
+        else if (operation == "ln") {
+            return ln(operand);
+        }         
         throw std::invalid_argument("no operation for operand");
     }
 
@@ -146,8 +287,11 @@ std::vector<std::string> ShuntingYard::tokenize(const std::string& expression) {
                 if (tokenVector.size() == 1) {
                     tokenVector.back() += c;
                 }
-                else if (!isNumber(*(&tokenVector.back() - 1))) {
+                else if (*(&tokenVector.back() - 1) == "(") {
                     tokenVector.back() += c;
+                }
+                else {
+                    tokenVector.push_back(std::string(&c, 1));
                 }
             } 
             else {
@@ -159,7 +303,7 @@ std::vector<std::string> ShuntingYard::tokenize(const std::string& expression) {
         }
         else {
             if (isNumber(tokenVector.back()) ||
-                tokenVector.back() == ")" || tokenVector.back() == "(") 
+                tokenVector.back() == ")" || tokenVector.back() == "(" || isOperator(tokenVector.back())) 
             {
                 tokenVector.push_back(std::string(&c, 1));
             }
